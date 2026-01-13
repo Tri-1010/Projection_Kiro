@@ -227,7 +227,8 @@ def map_forecast_to_loans(
     
     # Get loans at MOB=0 with their EAD
     df_mob0 = df[df[cfg["mob"]] == 0][[cfg["loan_id"], cfg["cohort"], cfg["segment_key"], cfg["ead"]]].copy()
-    df_mob0.columns = [cfg["loan_id"], "cohort", "segment_key", "ead_loan"]
+    df_mob0.columns = ["loan_id_temp", "cohort", "segment_key", "ead_loan"]
+    df_mob0 = df_mob0.rename(columns={"loan_id_temp": cfg["loan_id"]})
     
     # Compute total EAD per cohort-segment at MOB=0
     seg_totals = df_mob0.groupby(["cohort", "segment_key"])["ead_loan"].sum().reset_index()
@@ -326,7 +327,8 @@ def merge_forecast_to_snapshot(
     
     # Get EAD at MOB=0 per loan (denominator for DEL)
     df_mob0 = df[df[cfg["mob"]] == 0][[cfg["loan_id"], cfg["ead"]]].copy()
-    df_mob0.columns = [cfg["loan_id"], "ead_mob0"]
+    df_mob0.columns = ["loan_id_temp", "ead_mob0"]
+    df_mob0 = df_mob0.rename(columns={"loan_id_temp": cfg["loan_id"]})
     
     # Compute total EAD per cohort-segment at MOB=0
     df_temp = df[df[cfg["mob"]] == 0].copy()
@@ -341,7 +343,8 @@ def merge_forecast_to_snapshot(
     
     # Compute loan ratio
     df_ratio = df_temp[[cfg["loan_id"], cfg["cohort"], cfg["segment_key"], cfg["ead"]]].copy()
-    df_ratio.columns = [cfg["loan_id"], "cohort", "segment_key", "ead_loan"]
+    df_ratio.columns = ["loan_id_temp", "cohort", "segment_key", "ead_loan"]
+    df_ratio = df_ratio.rename(columns={"loan_id_temp": cfg["loan_id"]})
     df_ratio = df_ratio.merge(seg_totals, on=["cohort", "segment_key"], how="left")
     df_ratio["ead_ratio"] = df_ratio["ead_loan"] / df_ratio["ead_seg_total"]
     df_ratio["ead_ratio"] = df_ratio["ead_ratio"].fillna(0)
