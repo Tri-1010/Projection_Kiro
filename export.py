@@ -48,7 +48,7 @@ def _format_mixed_sheet(worksheet, segment_key: str, del_type: str, data_df: pd.
             cell = worksheet.cell(row=row_idx, column=col_idx)
             value = row_data[col_name]
             
-            if col_name in mob_cols and pd.notna(value):
+            if col_name in mob_cols and pd.notna(value) and isinstance(value, (int, float)):
                 # Format as percentage with 4 decimal places
                 cell.value = float(value)
                 cell.number_format = '0.0000%'
@@ -118,11 +118,6 @@ def _format_mixed_sheet(worksheet, segment_key: str, del_type: str, data_df: pd.
     for col_idx in range(1, len(data_df.columns) + 1):
         col_letter = get_column_letter(col_idx)
         worksheet.column_dimensions[col_letter].auto_size = True
-    """Sanitize sheet name for Excel (max 31 chars, no special chars)."""
-    invalid_chars = [":", "\\", "/", "?", "*", "[", "]"]
-    for char in invalid_chars:
-        name = name.replace(char, "_")
-    return name[:max_len]
 
 
 def _sanitize_sheet_name(name: str, max_len: int = 31) -> str:
@@ -179,7 +174,7 @@ def _format_standard_sheet(worksheet, data_df: pd.DataFrame, sheet_title: str = 
             cell = worksheet.cell(row=row_idx, column=col_idx)
             value = row_data[col_name]
             
-            if col_name in mob_cols and pd.notna(value):
+            if col_name in mob_cols and pd.notna(value) and isinstance(value, (int, float)):
                 cell.value = float(value)
                 cell.number_format = '0.0000%'
             else:
