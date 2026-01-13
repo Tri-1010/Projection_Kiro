@@ -1,0 +1,4 @@
+# file: C:\Users\User\Projection_kiro\forecast.py
+# hypothesis_version: 6.150.0
+
+['COARSE', 'FULL', 'GLOBAL', 'M', '_fct', 'bucket', 'cohort', 'cohort_fct', 'del30_forecast', 'del60_forecast', 'del90_forecast', 'ead', 'ead_fct_bad30', 'ead_fct_bad60', 'ead_fct_bad90', 'ead_fct_total', 'ead_forecast', 'ead_forecast_bad30', 'ead_forecast_bad60', 'ead_forecast_bad90', 'ead_forecast_total', 'ead_loan', 'ead_mob0', 'ead_ratio', 'ead_seg_total', 'ead_total', 'ignore', 'left', 'loan_id', 'mob', 'mob_fct', 'orig_date', 'segment_key', 'segment_key_fct', 'state', '|']

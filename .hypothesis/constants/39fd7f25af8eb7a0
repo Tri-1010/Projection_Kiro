@@ -1,0 +1,4 @@
+# file: C:\Users\User\Projection_kiro\calibration.py
+# hypothesis_version: 6.150.0
+
+[0.0, 1e-10, 1.0, 'M', 'actual_dels', 'actual_mean', 'bucket', 'cohort', 'del_pct', 'denom_ead', 'ead', 'expected_dels', 'expected_mean', 'k', 'mob', 'n_cohorts_used', 'orig_date', 'pred_mean', 'segment_key', '|']

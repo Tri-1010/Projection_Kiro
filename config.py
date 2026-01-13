@@ -53,4 +53,4 @@ CALIBRATION_MODE = "matrix"  # "matrix" or "vector"
 K_CLIP = (0.5, 2.0)  # (k_min, k_max) for calibration factors
 
 # Denominator level for DEL computation
-DENOM_LEVEL = "cohort"  # "cohort" or "cohort_segment"
+DENOM_LEVEL = "cohort_segment"  # "cohort" or "cohort_segment"

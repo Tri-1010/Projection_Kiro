@@ -1,0 +1,4 @@
+# file: C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\openpyxl\cell\read_only.py
+# hypothesis_version: 6.150.0
+
+['<EmptyCell>', 'Cell is read only', 'General', '_style_id', '_value', 'column', 'data_type', 'n', 'parent', 'row', '{1}{0}']

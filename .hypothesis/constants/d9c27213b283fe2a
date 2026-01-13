@@ -1,0 +1,4 @@
+# file: C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\numpy\__config__.py
+# hypothesis_version: 6.150.0
+
+['0.3.29', '19.29.30159', '3.1.0', '3.10', 'Build Dependencies', 'Compilers', 'False', 'Machine Information', 'Python Information', 'SIMD Extensions', 'True', 'args', 'baseline', 'blas', 'build', 'c', 'c++', 'cl', 'commands', 'cpu', 'cross-compiled', 'cython', 'detection method', 'dicts', 'endian', 'false', 'family', 'found', 'host', 'include directory', 'lapack', 'lib directory', 'link', 'linker', 'linker args', 'little', 'msvc', 'name', 'not found', 'numpy', 'path', 'pc file directory', 'pkgconfig', 'scipy-openblas', 'show_config', 'stdout', 'system', 'version', 'windows', 'x86_64']

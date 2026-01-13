@@ -1,0 +1,4 @@
+# file: C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\pandas\core\computation\parsing.py
+# hypothesis_version: 6.150.0
+
+[100, '!', '"', '$', "'", '?', '_', '_DEGREESIGN_', '_DOLLARSIGN_', '_DOUBLEQUOTE_', '_EUROSIGN_', '_EXCLAMATIONMARK_', '_QUESTIONMARK_', '_SINGLEQUOTE_', '`', '°', '€']

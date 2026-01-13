@@ -1,0 +1,4 @@
+# file: C:\Users\User\Projection_kiro\metrics.py
+# hypothesis_version: 6.150.0
+
+[0.0, 1e-10, 'ACTUAL', 'DEL30', 'DEL60', 'DEL90', 'FORECAST', 'M', '_actual', '_count', '_forecast', 'bucket', 'cohort', 'del_pct', 'denom_ead', 'ead', 'first', 'is_actual', 'is_bad', 'left', 'mob', 'numer_ead', 'orig_date', 'outer', 'segment_key', 'state', '|']
