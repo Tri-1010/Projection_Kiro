@@ -1,0 +1,4 @@
+# file: C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\numpy\lib\_version.py
+# hypothesis_version: 6.150.0
+
+['.', '.dev', 'NumpyVersion', 'NumpyVersion(%s)', '\\d+\\.\\d+\\.\\d+', 'a\\d', 'b\\d', 'final', 'numpy.lib', 'rc\\d']

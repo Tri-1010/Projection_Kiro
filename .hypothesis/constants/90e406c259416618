@@ -1,0 +1,4 @@
+# file: C:\Users\User\Projection_kiro\export.py
+# hypothesis_version: 6.150.0
+
+['*', '/', '0.00%', '1F4E79', '63BE7B', ':', '?', 'A1', 'ACTUAL', 'ALL', 'Calibration Factors', 'D9E1F2', 'DEL', 'F8696B', 'FF0000', 'FFEB9C', 'FORECAST', 'Forecast Data', 'MIXED', 'MOB_', 'PORTFOLIO', 'PORTFOLIO Actual', 'PORTFOLIO Flags', 'PORTFOLIO Forecast', 'Portfolio_Actual', 'Portfolio_Flags', 'Portfolio_Forecast', 'Portfolio_Mixed', 'Segment Metadata', 'Transition Matrices', '[', '\\', ']', '_', 'calibration_factors', 'center', 'cohort', 'del30', 'del60', 'del90', 'forecast_long', 'max', 'min', 'openpyxl', 'percentile', 'segment_key', 'segment_meta', 'solid', 'thick', 'thin', 'transitions_long']

@@ -15,9 +15,9 @@ def _format_mixed_sheet(worksheet, segment_key: str, del_type: str, data_df: pd.
     Format Mixed sheet với các yêu cầu:
     - Title tại dòng 1: {segment_key}_{del_type} Actual & Forecast
     - Header từ dòng 3, tô đậm, tô cell, căn giữa
-    - Values format 4 decimal places với %
-    - Color scale từ MOB 0 đến MOB cuối
-    - Border phân biệt actual/forecast
+    - Values format 2 decimal places với %
+    - Color scale: xanh (thấp) → đỏ (cao)
+    - Border đỏ: đặt ở cạnh dưới và cạnh phải của cell ACTUAL cuối cùng (trước FORECAST)
     - Bỏ grid
     """
     # 1. Title tại dòng 1
@@ -49,24 +49,26 @@ def _format_mixed_sheet(worksheet, segment_key: str, del_type: str, data_df: pd.
             value = row_data[col_name]
             
             if col_name in mob_cols and pd.notna(value) and isinstance(value, (int, float)):
-                # Format as percentage with 4 decimal places
+                # Format as percentage with 2 decimal places
+                # Định dạng phần trăm với 2 chữ số thập phân
                 cell.value = float(value)
-                cell.number_format = '0.0000%'
+                cell.number_format = '0.00%'
             else:
                 cell.value = value
     
-    # 4. Color scale cho MOB columns
+    # 4. Color scale cho MOB columns: xanh (thấp) → vàng (giữa) → đỏ (cao)
+    # Green (low) → Yellow (mid) → Red (high)
     if mob_cols:
         mob_start_col = data_df.columns.get_loc(mob_cols[0]) + 1
         mob_end_col = data_df.columns.get_loc(mob_cols[-1]) + 1
         
         color_scale_range = f"{get_column_letter(mob_start_col)}{data_start_row}:{get_column_letter(mob_end_col)}{data_start_row + len(data_df) - 1}"
         
-        # Red-Yellow-Green color scale
+        # Green-Yellow-Red color scale (xanh thấp nhất, đỏ cao nhất)
         color_scale = ColorScaleRule(
-            start_type='min', start_color='F8696B',  # Red
-            mid_type='percentile', mid_value=50, mid_color='FFEB9C',  # Yellow
-            end_type='max', end_color='63BE7B'  # Green
+            start_type='min', start_color='63BE7B',  # Green (thấp nhất)
+            mid_type='percentile', mid_value=50, mid_color='FFEB9C',  # Yellow (giữa)
+            end_type='max', end_color='F8696B'  # Red (cao nhất)
         )
         worksheet.conditional_formatting.add(color_scale_range, color_scale)
     
@@ -85,30 +87,52 @@ def _format_mixed_sheet(worksheet, segment_key: str, del_type: str, data_df: pd.
             cell = worksheet.cell(row=row_idx, column=col_idx)
             cell.border = thin_border
     
-    # Add thick red borders to separate actual/forecast (if flags available)
+    # Add thick red borders at the boundary between ACTUAL and FORECAST
+    # Đặt border đỏ dày ở ranh giới giữa ACTUAL và FORECAST
+    # Border đỏ đặt ở cạnh dưới và cạnh phải của cell ACTUAL cuối cùng
     if flags_df is not None and mob_cols:
         thick_red_side = Side(style='thick', color='FF0000')
+        thin_side = Side(style='thin')
         
         for row_idx in range(data_start_row, data_start_row + len(data_df)):
             data_row_idx = row_idx - data_start_row
             if data_row_idx >= len(flags_df):
                 continue
-                
+            
+            # Tìm cell ACTUAL cuối cùng trong row này
+            # Find the last ACTUAL cell in this row
+            last_actual_col_idx = None
             for col_idx, col_name in enumerate(data_df.columns, 1):
                 if col_name not in mob_cols:
                     continue
-                    
-                cell = worksheet.cell(row=row_idx, column=col_idx)
                 flag_value = flags_df.iloc[data_row_idx][col_name] if col_name in flags_df.columns else None
+                if flag_value == 'ACTUAL':
+                    last_actual_col_idx = col_idx
+            
+            # Nếu có cell ACTUAL và có cell FORECAST phía sau
+            # If there's an ACTUAL cell and FORECAST cells after it
+            if last_actual_col_idx is not None:
+                # Kiểm tra xem có FORECAST cell phía sau không
+                has_forecast_after = False
+                for col_idx, col_name in enumerate(data_df.columns, 1):
+                    if col_idx <= last_actual_col_idx:
+                        continue
+                    if col_name not in mob_cols:
+                        continue
+                    flag_value = flags_df.iloc[data_row_idx][col_name] if col_name in flags_df.columns else None
+                    if flag_value == 'FORECAST':
+                        has_forecast_after = True
+                        break
                 
-                if flag_value == 'FORECAST':
-                    # Add thick red bottom and left borders for forecast cells
-                    current_border = cell.border
+                if has_forecast_after:
+                    # Đặt border đỏ dày ở cạnh phải và cạnh dưới của cell ACTUAL cuối cùng
+                    # Set thick red border on right and bottom of last ACTUAL cell
+                    cell = worksheet.cell(row=row_idx, column=last_actual_col_idx)
                     cell.border = Border(
-                        left=thick_red_side,
-                        right=current_border.right,
-                        top=current_border.top,
-                        bottom=thick_red_side
+                        left=thin_side,
+                        right=thick_red_side,  # Cạnh phải đỏ dày
+                        top=thin_side,
+                        bottom=thick_red_side  # Cạnh dưới đỏ dày
                     )
     
     # 6. Bỏ grid
@@ -145,7 +169,7 @@ def _ensure_unique_names(names: list) -> list:
 def _format_standard_sheet(worksheet, data_df: pd.DataFrame, sheet_title: str = None):
     """
     Format standard sheet (non-Mixed sheets) với định dạng cơ bản:
-    - Values format 4 decimal places với %
+    - Values format 2 decimal places với %
     - Headers tô đậm
     - Bỏ grid
     """
@@ -175,8 +199,10 @@ def _format_standard_sheet(worksheet, data_df: pd.DataFrame, sheet_title: str = 
             value = row_data[col_name]
             
             if col_name in mob_cols and pd.notna(value) and isinstance(value, (int, float)):
+                # Format as percentage with 2 decimal places
+                # Định dạng phần trăm với 2 chữ số thập phân
                 cell.value = float(value)
-                cell.number_format = '0.0000%'
+                cell.number_format = '0.00%'
             else:
                 cell.value = value
     
@@ -237,7 +263,7 @@ def _compute_portfolio_del(
                 result[col] = "FORECAST"
         return pd.Series(result)
     
-    portfolio_flags = flags_wide.groupby("cohort").apply(agg_flags).reset_index()
+    portfolio_flags = flags_wide.groupby("cohort", as_index=False).apply(agg_flags, include_groups=False).reset_index(drop=True)
     portfolio_flags.insert(1, "segment_key", "PORTFOLIO")
     
     return portfolio_mixed, portfolio_actual, portfolio_forecast, portfolio_flags

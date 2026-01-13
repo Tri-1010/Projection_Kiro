@@ -110,9 +110,9 @@ def main():
     print("✅ Test completed! Check 'test_formatted_output.xlsx' for formatting:")
     print("   - Title tại dòng 1 với font size 20, bold, màu Dark Blue")
     print("   - Headers từ dòng 3, tô đậm, tô cell, căn giữa")
-    print("   - Values format 4 decimal places với %")
-    print("   - Color scale Red-Yellow-Green cho MOB columns")
-    print("   - Border phân biệt actual/forecast bằng màu đỏ nét đậm")
+    print("   - Values format 2 decimal places với % (0.00%)")
+    print("   - Color scale Green-Yellow-Red cho MOB columns (xanh thấp, đỏ cao)")
+    print("   - Border đỏ dày ở cạnh phải và dưới của cell ACTUAL cuối cùng")
     print("   - Bỏ grid lines")
 
 if __name__ == "__main__":
