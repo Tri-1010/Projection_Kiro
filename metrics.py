@@ -264,3 +264,61 @@ def make_mixed_report(
         forecast_wide[mob_col] = merged.get(f"{mob_col}_forecast", np.nan)
     
     return mixed_wide, flags_wide, actual_wide, forecast_wide
+
+
+
+def compute_all_del_metrics(
+    df_snapshot: pd.DataFrame,
+    forecast_df: pd.DataFrame,
+    cfg: Dict[str, Any],
+    segment_cols: List[str],
+    max_mob: int,
+    denom_level: str,
+    buckets_30p: List[str],
+    buckets_60p: List[str],
+    buckets_90p: List[str]
+) -> Dict[str, Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]]:
+    """
+    Tính DEL30, DEL60, DEL90 và tạo mixed reports cho tất cả.
+    Compute DEL30, DEL60, DEL90 and create mixed reports for all.
+    
+    Args:
+        df_snapshot: Snapshot DataFrame.
+        forecast_df: Forecast DataFrame.
+        cfg: Configuration dict.
+        segment_cols: Segment columns.
+        max_mob: Maximum MOB.
+        denom_level: "cohort" or "cohort_segment".
+        buckets_30p: Bad states for DEL30 (e.g., ["DPD30+", "DPD60+", "DPD90+", "WRITEOFF"])
+        buckets_60p: Bad states for DEL60 (e.g., ["DPD60+", "DPD90+", "WRITEOFF"])
+        buckets_90p: Bad states for DEL90 (e.g., ["DPD90+", "WRITEOFF"])
+        
+    Returns:
+        Dict with keys "DEL30", "DEL60", "DEL90", each containing:
+        (mixed_wide, flags_wide, actual_wide, forecast_wide)
+    """
+    results = {}
+    
+    del_configs = [
+        ("DEL30", buckets_30p),
+        ("DEL60", buckets_60p),
+        ("DEL90", buckets_90p),
+    ]
+    
+    for del_name, bad_states in del_configs:
+        # Compute actual DEL
+        actual_del_long, denom_map = compute_del_from_snapshot(
+            df_snapshot, cfg, bad_states, segment_cols, max_mob, denom_level
+        )
+        
+        # Compute forecast DEL
+        pred_del_long = compute_del_from_forecast(forecast_df, bad_states, denom_map)
+        
+        # Make mixed report
+        mixed_wide, flags_wide, actual_wide, forecast_wide = make_mixed_report(
+            actual_del_long, pred_del_long, max_mob
+        )
+        
+        results[del_name] = (mixed_wide, flags_wide, actual_wide, forecast_wide)
+    
+    return results

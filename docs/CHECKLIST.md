@@ -151,23 +151,48 @@ assert np.isclose(v2.sum(), v.sum())
 
 ## 5. export.py
 
-### 5.1 Required Sheets
-- [ ] **VI**: Tất cả sheets bắt buộc tồn tại
-- [ ] **EN**: All required sheets exist
+### 5.1 Required Sheets Structure
+- [ ] **VI**: Portfolio sheets tồn tại (Portfolio_Mixed, Portfolio_Actual, Portfolio_Forecast, Portfolio_Flags)
+- [ ] **EN**: Portfolio sheets exist (Portfolio_Mixed, Portfolio_Actual, Portfolio_Forecast, Portfolio_Flags)
 
 ```python
-required = ['transitions_long', 'del30_mixed', 'del30_flags', 'del30_actual', 'del30_forecast']
+# Check Portfolio sheets
+portfolio_sheets = ['Portfolio_Mixed', 'Portfolio_Actual', 'Portfolio_Forecast', 'Portfolio_Flags']
 wb = openpyxl.load_workbook(path)
-assert all(s in wb.sheetnames for s in required)
+assert all(s in wb.sheetnames for s in portfolio_sheets)
 ```
 
-### 5.2 Sheet Names
-- [ ] **VI**: Tên sheet <= 31 ký tự
-- [ ] **EN**: Sheet names <= 31 characters
+### 5.2 Per-Product Sheets
+- [ ] **VI**: Mỗi product có 4 sheets riêng ({Product}_Mixed, _Actual, _Forecast, _Flags)
+- [ ] **EN**: Each product has 4 separate sheets ({Product}_Mixed, _Actual, _Forecast, _Flags)
 
-### 5.3 MOB Columns
-- [ ] **VI**: Cột MOB_0 đến MOB_24 đầy đủ
-- [ ] **EN**: Columns MOB_0 to MOB_24 complete
+```python
+# Check per-product sheets
+products = ['TOPUP', 'SALPIL', 'XSELL']  # Example products
+for product in products:
+    product_sheets = [f'{product}_Mixed', f'{product}_Actual', f'{product}_Forecast', f'{product}_Flags']
+    assert all(s in wb.sheetnames for s in product_sheets)
+```
+
+### 5.3 Sheet Names
+- [ ] **VI**: Tên sheet <= 31 ký tự, không có ký tự đặc biệt
+- [ ] **EN**: Sheet names <= 31 characters, no special characters
+
+### 5.4 MOB Columns
+- [ ] **VI**: Cột MOB_0 đến MOB_24 đầy đủ trong tất cả DEL sheets
+- [ ] **EN**: Columns MOB_0 to MOB_24 complete in all DEL sheets
+
+### 5.5 Portfolio Aggregation
+- [ ] **VI**: Portfolio DEL = mean của tất cả products per cohort
+- [ ] **EN**: Portfolio DEL = mean of all products per cohort
+
+```python
+# Verify portfolio calculation
+portfolio_df = pd.read_excel(path, sheet_name='Portfolio_Mixed')
+topup_df = pd.read_excel(path, sheet_name='TOPUP_Mixed')
+salpil_df = pd.read_excel(path, sheet_name='SALPIL_Mixed')
+# Check: portfolio_df['MOB_6'] ≈ mean(topup_df['MOB_6'], salpil_df['MOB_6']) per cohort
+```
 
 ---
 

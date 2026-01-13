@@ -42,8 +42,11 @@ WEIGHT_MODE = "ead"  # "ead" or "count"
 PRIOR_STRENGTH_FULL = 50.0
 PRIOR_STRENGTH_COARSE = 100.0
 
-# Tail pooling: pool matrices for MOB >= this value
-TAIL_POOL_START = 18
+# Tail pooling settings
+# Tail pooling giúp giảm noise ở MOB cao bằng cách gộp matrices
+# Tail pooling helps reduce noise at high MOBs by averaging matrices
+TAIL_POOL_ENABLED = False  # True: bật tail pooling, False: tắt
+TAIL_POOL_START = 18       # MOB bắt đầu pooling (chỉ áp dụng khi TAIL_POOL_ENABLED=True)
 
 # Calibration settings
 CALIBRATION_MODE = "matrix"  # "matrix" or "vector"

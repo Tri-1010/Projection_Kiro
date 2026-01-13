@@ -263,8 +263,10 @@ def estimate_transition_matrices(
                     "n_rows_with_data": int((seg_counts.sum(axis=1) > 0).sum())
                 })
     
-    # Tail pooling
-    if tail_pool_start is not None and tail_pool_start < max_mob:
+    # Tail pooling - chỉ áp dụng khi TAIL_POOL_ENABLED=True
+    # Tail pooling - only apply when TAIL_POOL_ENABLED=True
+    from config import TAIL_POOL_ENABLED
+    if TAIL_POOL_ENABLED and tail_pool_start is not None and tail_pool_start < max_mob:
         tail_mobs = list(range(tail_pool_start, max_mob))
         
         level_seg_keys = set()

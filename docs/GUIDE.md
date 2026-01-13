@@ -45,8 +45,10 @@ from export import export_to_excel
 - FULL: Posterior = counts + τ_full × P_coarse
 
 ### 4.3 Tail Pooling
+- Điều khiển bởi `TAIL_POOL_ENABLED` trong config.py (True/False)
 - Với MOB >= TAIL_POOL_START: lấy trung bình ma trận
 - Giảm nhiễu cho các MOB cao
+- Mặc định: `TAIL_POOL_ENABLED = False`
 
 ### 4.4 Trạng thái Hấp thụ / Absorbing States
 - DPD90+ và CLOSED là trạng thái hấp thụ
@@ -54,12 +56,24 @@ from export import export_to_excel
 
 ## 5. Đầu ra / Outputs
 
-### Excel Report Sheets:
+### Excel Report Structure:
+
+**Portfolio Sheets (Tổng hợp tất cả products):**
+1. `Portfolio_Mixed`: DEL30 tổng hợp (actual + forecast)
+2. `Portfolio_Actual`: DEL30 thực tế tổng hợp
+3. `Portfolio_Forecast`: DEL30 dự báo tổng hợp
+4. `Portfolio_Flags`: Cờ ACTUAL/FORECAST/MIXED
+
+**Per-Product Sheets (Mỗi product riêng biệt):**
+- `{PRODUCT}_Mixed`: DEL30 hỗn hợp cho product
+- `{PRODUCT}_Actual`: DEL30 thực tế cho product
+- `{PRODUCT}_Forecast`: DEL30 dự báo cho product
+- `{PRODUCT}_Flags`: Cờ ACTUAL/FORECAST cho product
+
+Ví dụ: `TOPUP_Mixed`, `SALPIL_Mixed`, `XSELL_Mixed`, etc.
+
+**Metadata Sheets:**
 1. `transitions_long`: Ma trận chuyển đổi dạng dài
 2. `segment_meta`: Metadata phân khúc
-3. `del30_mixed`: DEL30 hỗn hợp (actual/forecast)
-4. `del30_flags`: Cờ ACTUAL/FORECAST
-5. `del30_actual`: DEL30 thực tế
-6. `del30_forecast`: DEL30 dự báo
-7. `calibration_factors`: Hệ số hiệu chỉnh (nếu có)
-8. `forecast_long`: Dự báo dạng dài
+3. `calibration_factors`: Hệ số hiệu chỉnh (nếu có)
+4. `forecast_long`: Dự báo dạng dài

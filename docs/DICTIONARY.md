@@ -189,6 +189,7 @@ Centralize all configuration and column names for easy maintenance and avoid har
 | `MIN_COUNT` | int | Số lượng tối thiểu để ước lượng | Minimum count for estimation |
 | `WEIGHT_MODE` | str | "ead" hoặc "count" | Weighting mode |
 | `PRIOR_STRENGTH_*` | float | Độ mạnh prior cho shrinkage | Prior strength for shrinkage |
+| `TAIL_POOL_ENABLED` | bool | Bật/tắt tail pooling | Enable/disable tail pooling |
 | `TAIL_POOL_START` | int | MOB bắt đầu tail pooling | MOB to start tail pooling |
 | `K_CLIP` | tuple | (k_min, k_max) cho calibration | Calibration factor bounds |
 | `DENOM_LEVEL` | str | "cohort" hoặc "cohort_segment" | Denominator level for DEL |
@@ -329,9 +330,20 @@ A001    | 2   | DPD1+      | DPD30+   | 96000  | 2023-01
 ### 5.2 Function: `estimate_transition_matrices(...)`
 
 **Mục đích / Purpose:**
-Ước lượng ma trận chuyển đổi với hierarchical shrinkage và tail pooling.
+Ước lượng ma trận chuyển đổi với hierarchical shrinkage và tail pooling (tùy chọn).
 
-Estimate transition matrices with hierarchical shrinkage and tail pooling.
+Estimate transition matrices with hierarchical shrinkage and optional tail pooling.
+
+**Tail Pooling Control:**
+```python
+# Trong config.py:
+TAIL_POOL_ENABLED = False  # True: bật, False: tắt
+TAIL_POOL_START = 18       # MOB bắt đầu pooling
+
+# Trong transitions.py, tail pooling chỉ chạy khi:
+if TAIL_POOL_ENABLED and tail_pool_start is not None and tail_pool_start < max_mob:
+    # Apply tail pooling...
+```
 
 **Input:**
 | Parameter | Type | Mô tả |
@@ -825,9 +837,9 @@ cohort   | segment_key | MOB_0 | MOB_1 | ... | MOB_12 | ... | MOB_24
 ### 9.1 Function: `export_to_excel(path, ...)`
 
 **Mục đích / Purpose:**
-Xuất tất cả kết quả ra file Excel với nhiều sheets.
+Xuất tất cả kết quả ra file Excel với sheet riêng cho mỗi product và sheet Portfolio tổng hợp.
 
-Export all results to Excel workbook with multiple sheets.
+Export all results to Excel workbook with separate sheets per product and Portfolio summary.
 
 **Input:**
 | Parameter | Type | Mô tả |
@@ -842,21 +854,36 @@ Export all results to Excel workbook with multiple sheets.
 | `forecast_df` | DataFrame | (Optional) Forecast dạng long |
 | `meta_df` | DataFrame | (Optional) Metadata |
 
-**Output Sheets:**
+**Output Sheets Structure:**
+
+**Portfolio Sheets (Tổng hợp):**
+| Sheet Name | Nội dung |
+|------------|----------|
+| `Portfolio_Mixed` | DEL tổng hợp (mean của tất cả products) |
+| `Portfolio_Actual` | Actual DEL tổng hợp |
+| `Portfolio_Forecast` | Forecast DEL tổng hợp |
+| `Portfolio_Flags` | Flags (ACTUAL/FORECAST/MIXED) |
+
+**Per-Product Sheets (Mỗi product riêng):**
+| Sheet Pattern | Ví dụ | Nội dung |
+|---------------|-------|----------|
+| `{Product}_Mixed` | `TOPUP_Mixed` | DEL mixed cho product TOPUP |
+| `{Product}_Actual` | `TOPUP_Actual` | Actual DEL cho product TOPUP |
+| `{Product}_Forecast` | `TOPUP_Forecast` | Forecast DEL cho product TOPUP |
+| `{Product}_Flags` | `TOPUP_Flags` | Flags cho product TOPUP |
+
+**Metadata Sheets:**
 | Sheet Name | Nội dung |
 |------------|----------|
 | `transitions_long` | Tất cả transition probabilities |
 | `segment_meta` | Sample sizes per segment per MOB |
-| `del30_mixed` | Mixed report (actual + forecast) |
-| `del30_flags` | ACTUAL/FORECAST flags |
-| `del30_actual` | Actual DEL only |
-| `del30_forecast` | Forecast DEL only |
 | `calibration_factors` | K-factors per MOB |
 | `forecast_long` | Full forecast data |
 
 **Helper Functions:**
 - `_sanitize_sheet_name()`: Đảm bảo tên sheet ≤ 31 ký tự, không có ký tự đặc biệt
-- `_ensure_unique_names()`: Đảm bảo tên sheet không trùng
+- `_compute_portfolio_del()`: Tính DEL Portfolio từ tất cả products
+- `_split_by_segment()`: Chia DataFrame theo segment_key
 
 ---
 
